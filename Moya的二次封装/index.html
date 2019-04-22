@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="Chinese">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Coke">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Coke">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Moya的二次封装 · Coke&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Coke&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Moya的二次封装</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Coke's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Moya的二次封装
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Swift教程">Swift教程</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2k</span>阅读时长: <span class="post-count reading-time">8 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/04/22</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="1-为什么要用Moya"><a href="#1-为什么要用Moya" class="headerlink" title="1.为什么要用Moya"></a>1.为什么要用Moya</h1><p><a href="https://github.com/Moya/Moya" target="_blank" rel="noopener">Moya的官方文档</a>里面已经说的很清楚了。</p>
+<p>1.之前在项目中有慢慢在用Swift替换OC，但是大部门框架都还是基于OC的老框架，然后其中每次版本更新的维护成本相当高。 所以最好建议如果使用Swift的开发最好还是把所有的框架也替换成Swift，尽量避免二种语言混合开发。</p>
+<p>2.上面的官方文章中解答了Swift网络框架Alamofire和Moya的区别。</p>
+<p>下面是Alamofire和Moya的结构区别：</p>
+<p><img src="/Users/xiejianke/Downloads/WX20190422-103018.png" alt="WX20190422-103018"></p>
+<p>官方给出的解释是：你不应用直接引用Alamofire. 虽然它是一个很棒的库,但是Moya的观点是你不必处理那些低级的细节。</p>
+<p>###2.如何使用Moya</p>
+<p><a href="https://github.com/Moya/Moya/tree/master/docs_CN" target="_blank" rel="noopener">Moya中文官方文档</a>里面有中文文档，没使用过的可以看看。</p>
+<p>###3.对Moya的第二次封装</p>
+<h2 id="1-正常使用"><a href="#1-正常使用" class="headerlink" title="1.正常使用"></a>1.正常使用</h2><p>a.生成一个enum，写好每个API的方法</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">XjkAPI</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">case</span> testApi</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">case</span> testApiAllKey(para:<span class="type">String</span>,para1:<span class="type">String</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">case</span> testApiDict(param:[<span class="type">String</span>:<span class="type">Any</span>])</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>b.用Moya一定要让定义的enum遵守TargetType，遵守之后然后补充完每个需要使用到的参数，基本就可以使用了</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">XjkAPI</span>:<span class="title">TargetType</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//服务器地址</span></span><br><span class="line">    <span class="keyword">var</span> baseURL: <span class="type">URL</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">URL</span>.<span class="keyword">init</span>(string: <span class="string">"https://api.douban.com/v2/movie/top250"</span>)! <span class="comment">//测试API地址</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//具体某个方法的路径</span></span><br><span class="line">    <span class="keyword">var</span> path: <span class="type">String</span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> .testApi:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">""</span></span><br><span class="line">        <span class="keyword">case</span> .testApiAllKey( <span class="number">_</span>, <span class="number">_</span>):</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"bbbb"</span></span><br><span class="line">        <span class="keyword">case</span> .testApiDict(<span class="number">_</span>):</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"xxx"</span></span><br><span class="line">        </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//请求的方法 get或者post之类的</span></span><br><span class="line">    <span class="keyword">var</span> method: <span class="type">HTTPMethod</span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> .testApi:</span><br><span class="line">            <span class="keyword">return</span> <span class="type">HTTPMethod</span>.<span class="keyword">get</span></span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="type">HTTPMethod</span>.<span class="keyword">get</span></span><br><span class="line">        &#125;</span><br><span class="line">     </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//编码转义</span></span><br><span class="line">    <span class="keyword">var</span> sampleData: <span class="type">Data</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Data</span>.<span class="keyword">init</span>()</span><br><span class="line">    &#125;</span><br><span class="line">   <span class="comment">//一个请求任务事件</span></span><br><span class="line">    <span class="keyword">var</span> task: <span class="type">Task</span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> .testApi:</span><br><span class="line">            <span class="keyword">return</span> .requestPlain</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">return</span> .requestData(<span class="type">Data</span>.<span class="keyword">init</span>())</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//请求的get post给服务器的头参数</span></span><br><span class="line">    <span class="keyword">var</span> headers: [<span class="type">String</span> : <span class="type">String</span>]?&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//请求的get post给服务器的参数</span></span><br><span class="line">    <span class="keyword">var</span> parameters: [<span class="type">String</span>: <span class="type">Any</span>]? &#123;</span><br><span class="line">        <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> .testApi:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//验证状态码</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> validationType: <span class="type">ValidationType</span>?&#123;</span><br><span class="line">        <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> .testApi:</span><br><span class="line">            <span class="keyword">return</span> .successCodes</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">return</span> .<span class="keyword">none</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//编码的格式</span></span><br><span class="line">    <span class="keyword">var</span> parameterEncoding: <span class="type">ParameterEncoding</span> &#123;</span><br><span class="line">       </span><br><span class="line">        <span class="keyword">return</span> <span class="type">URLEncoding</span>.<span class="keyword">default</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//加载请求是否可以点击屏幕</span></span><br><span class="line">    <span class="keyword">var</span> touch:<span class="type">Bool</span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> .testApi:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//是否显示转圈提示</span></span><br><span class="line">    <span class="keyword">var</span> show: <span class="type">Bool</span> &#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">switch</span> <span class="keyword">self</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> .testApi:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>c.到这里基本上就能正常使用Moya了。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> provider = <span class="type">MoyaProvider</span>&lt;<span class="type">XjkAPI</span>&gt;()</span><br><span class="line">provider.request(.testApi) &#123; (result) <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">switch</span> result&#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">let</span> .success(response):</span><br><span class="line">            <span class="built_in">print</span>(response)</span><br><span class="line">        <span class="keyword">case</span> <span class="keyword">let</span> .failure(error):</span><br><span class="line">            <span class="built_in">print</span>(error)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-再次封装"><a href="#2-再次封装" class="headerlink" title="2.再次封装"></a>2.再次封装</h2><p>a.为什么需要再次封装?</p>
+<p><strong>1.因为太懒了，尽管已经很方便了，但每次在使用还是需要写很多相同代码，还有重复的判断，简直太太太麻烦了，也确实减轻很多不必要的工作量的同时也增加了自己的代码质量和开发效率。</strong></p>
+<p>2.一般不管在使用OC时使用AFN或者YTKNetwork还是到现在Moya都会在自己项目的基础上做再一次的封装，原因是当我替换第三方网络框架的时候也能尽量保持不动最上层调用的情况下替换网络框架，减少了替换时的维护时间及修改框架时出现的不必要的错误和测试成本。</p>
+<p>b.封装</p>
+<p>想法是基于Provider进行封装并且在基础上做我们自己的项目封装。之前用OC时候我都会基本AFN或者YTK封装一个自己的Request Model，储存我自己想要的属性，这样能最大程度上自由地存储request的信息，也比较方便调用。但是这种在Moya里面基本上已经帮我们都做好了封装，我们只要在Moya之上再进行封装就好。接下来我们来封装Provider。</p>
+<p>1.生成一个NetworkManager.swift文件，用来封装Provider用调用的方法。</p>
+<p>2.在里面重写一些方法</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> Moya</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">var</span> requestTimeOut:<span class="type">Double</span> = <span class="number">30</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    </span><br><span class="line"><span class="comment">//设置请求参数</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">let</span> myEndpointClosure = &#123; (target:<span class="type">XjkAPI</span>) -&gt; <span class="type">Endpoint</span> <span class="keyword">in</span></span><br><span class="line">    <span class="keyword">let</span> url = target.baseURL.absoluteString + target.path</span><br><span class="line">    <span class="keyword">var</span> endpoint = <span class="type">Endpoint</span>.<span class="keyword">init</span>(</span><br><span class="line">        url: url,</span><br><span class="line">        sampleResponseClosure: &#123; () -&gt; <span class="type">EndpointSampleResponse</span> <span class="keyword">in</span></span><br><span class="line">       .networkResponse(<span class="number">200</span>, target.sampleData)&#125;,</span><br><span class="line">        method: target.method,</span><br><span class="line">        task: target.task,</span><br><span class="line">        httpHeaderFields: target.headers)</span><br><span class="line">    <span class="keyword">switch</span> target &#123;</span><br><span class="line">    <span class="keyword">case</span> .testApi:</span><br><span class="line">       </span><br><span class="line">        <span class="keyword">return</span> endpoint</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">return</span> endpoint</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="comment">//设置打印一些参数</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">let</span> requestClosure = &#123; (endpoint: <span class="type">Endpoint</span>, done: <span class="type">MoyaProvider</span>.<span class="type">RequestResultClosure</span>) <span class="keyword">in</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> request = <span class="keyword">try</span> endpoint.urlRequest()</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//设置请求时长</span></span><br><span class="line">        request.timeoutInterval = requestTimeOut</span><br><span class="line">        <span class="comment">// 打印请求参数</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> requestData = request.httpBody &#123;</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">"<span class="subst">\(request.url!)</span>"</span>+<span class="string">"\n"</span>+<span class="string">"<span class="subst">\(request.httpMethod ?? "")</span>"</span>+<span class="string">"发送参数"</span>+<span class="string">"<span class="subst">\(String(data: request.httpBody!, encoding: String.Encoding.utf8)</span> ?? "</span><span class="string">")"</span>)</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">"<span class="subst">\(request.url!)</span>"</span>+<span class="string">"<span class="subst">\(String(describing: request.httpMethod)</span>)"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        done(.success(request))</span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">        done(.failure(<span class="type">MoyaError</span>.underlying(error, <span class="literal">nil</span>)))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//里面可以直接修改plugin回调里面的东西，用于添加自定义插件逻辑</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">let</span> networkPlugin = <span class="type">NetworkActivityPlugin</span>.<span class="keyword">init</span> &#123; (changeType, target) <span class="keyword">in</span></span><br><span class="line"> <span class="comment">//   print("network changeType: \(changeType)")</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> api = target <span class="keyword">as</span>! <span class="type">XjkAPI</span></span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> changeType&#123;</span><br><span class="line">    <span class="keyword">case</span> .began:</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>  api.show == <span class="literal">true</span>&#123;</span><br><span class="line">            <span class="comment">//在这里面可以通过之前在API里面设定的参数去控制是否菊花控件</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>  api.touch == <span class="literal">true</span>&#123;</span><br><span class="line">            <span class="comment">//在这里面可以通过之前在API里面设定的参数去控制是否能操作</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"network is starting"</span>)</span><br><span class="line">        <span class="type">UIApplication</span>.shared.isNetworkActivityIndicatorVisible = <span class="literal">true</span></span><br><span class="line">    <span class="keyword">case</span> .ended:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"network is end"</span>)</span><br><span class="line">        <span class="type">UIApplication</span>.shared.isNetworkActivityIndicatorVisible = <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//公共的生成Provider的方法</span></span><br><span class="line"><span class="keyword">let</span> <span class="type">Provider</span> = <span class="type">MoyaProvider</span>&lt;<span class="type">XjkAPI</span>&gt;(endpointClosure: myEndpointClosure, requestClosure: requestClosure, plugins: [networkPlugin], trackInflights: <span class="literal">false</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">typealias</span> successCallback = ((<span class="type">String</span>)-&gt;(<span class="type">Void</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">//写一个最底层的回调，主要判断一些最基本的API，写共通代码</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NetWorkRequest</span><span class="params">(<span class="number">_</span> target:XjkAPI,completion:@escaping successCallback)</span></span> -&gt; <span class="type">Cancellable</span>&#123;</span><br><span class="line">    <span class="comment">// 判断是否有网络没有可以直接返回</span></span><br><span class="line">   </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> cancellable = <span class="type">Provider</span>.request(target) &#123; (result) <span class="keyword">in</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">switch</span> result&#123;</span><br><span class="line">        </span><br><span class="line">            <span class="keyword">case</span> <span class="keyword">let</span> .success(response):</span><br><span class="line">            <span class="keyword">do</span>&#123;</span><br><span class="line">               </span><br><span class="line">                <span class="keyword">let</span> jsonData = <span class="keyword">try</span> <span class="type">JSONSerialization</span>.jsonObject(with: response.data, options: .mutableContainers)</span><br><span class="line">                </span><br><span class="line">                    <span class="comment">//如果是正常服务器接口会有状态码，把内容转成dictionary 然后把下面判断放出来就OK</span></span><br><span class="line"><span class="comment">//                if jsonData["statusCode"] == "200"&#123;</span></span><br><span class="line">                    completion(<span class="type">String</span>(data: response.data, encoding: .utf8)!)</span><br><span class="line"><span class="comment">//                &#125;else&#123;</span></span><br><span class="line"><span class="comment">//                    print("statusCode不为200，服务器异常")</span></span><br><span class="line"><span class="comment">//                &#125;</span></span><br><span class="line">              </span><br><span class="line">            &#125;<span class="keyword">catch</span>&#123;</span><br><span class="line">                </span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">case</span> <span class="keyword">let</span> .failure(error):</span><br><span class="line">            <span class="keyword">guard</span> <span class="keyword">let</span> error = error <span class="keyword">as</span>? <span class="type">CustomStringConvertible</span> <span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">"网络连接失败"</span>)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">  	<span class="comment">//用于外部取消该请求</span></span><br><span class="line">    <span class="keyword">return</span> cancellable</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//最终的调用</span><br><span class="line">let cancellable = NetWorkRequest(.testApi) &#123;  result in</span><br><span class="line">    print(result)</span><br><span class="line">&#125;</span><br><span class="line">//取消请求</span><br><span class="line">//cancellable.cancel()</span><br></pre></td></tr></table></figure>
+<p>c.总结下二次封装之后解决了什么问题？</p>
+<ol>
+<li>可以自由控制每个请求屏幕是否可点击滑动。比如：在网络情况比较差的情况下可能用户体验不好，是否请求没返回之前屏幕是否可操作。</li>
+<li>可以自由控制每个请求菊花是否显示。比如：TableView的情况下可能不要显示菊花，有些单个请求可能需要一个个等待数据返回可能需要显示菊花。</li>
+<li>每个请求会返回一个cancellable，能通过这个取消当前请求，目的是在通用一个父Vc的情况下，在页面销毁之前也销毁请求。</li>
+<li><p>我们不用再重复写判断请求失败的方法，但还有一种情况，当某个请求需要通过server端返回一个独特的Code做不同的操作情况下，也能在NetWorkRequest方法里加上某个单独的Code判断。</p>
+</li>
+<li><p>在response的返回对数据进行统一验证。</p>
+</li>
+<li>有一些因为公司安全保存一些session或者加密的密文，也可统一在response返回时做效验和保存。</li>
+</ol>
+<p>d.还可以根据项目再封装加强的地方：</p>
+<p>通过Vc的种类分为tableView列表数据请求和部分数据请求，如果是列表数据，意味着可以去添加属性判断是否展示空列表的视图，判断菊花是否显示，还可以判断是否上下拉刷新，等请求返回时去关闭上下拉刷新。这样下来基本上网络框架封再装就完成了。</p>
+<p>谢谢观看！！</p>
+<p>希望文章能帮到您！！</p>
+<p>如果有更好的意见或者建议请联系我</p>
+<p>邮箱：<a href="mailto:yirankege@126.com" target="_blank" rel="noopener">yirankege@126.com</a></p>
+<p>GitHub:<a href="https://github.com/yirankege/Moya" target="_blank" rel="noopener">https://github.com/yirankege/Moya</a></p>
+<p>技术博客：<a href="https://yirankege.github.io/">https://yirankege.github.io/</a></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="https://yirankege.github.io">Coke</a>
+            <p>原文链接：<a href="https://yirankege.github.io/Moya的二次封装/">https://yirankege.github.io/Moya的二次封装/</a>
+            <p>发表日期：<a href="https://yirankege.github.io/Moya的二次封装/">April 22nd 2019, 12:03:50 pm</a>
+            <p>更新日期：<a href="https://yirankege.github.io/Moya的二次封装/">April 22nd 2019, 9:43:55 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/hello-world/" title= "Hello World">
+                    <div class="prevTitle">Hello World</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:yirankege@126.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="https://github.com/yirankege" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/wechat.jpeg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-为什么要用Moya"><span class="toc-number">1.</span> <span class="toc-text">1.为什么要用Moya</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-正常使用"><span class="toc-number">1.1.</span> <span class="toc-text">1.正常使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-再次封装"><span class="toc-number">1.2.</span> <span class="toc-text">2.再次封装</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 2
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/22</span><a class="archive-post-title" href= "/Moya的二次封装/" >Moya的二次封装</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/12</span><a class="archive-post-title" href= "/hello-world/" >Hello World</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Swift教程"><span class="iconfont-archer">&#xe606;</span>Swift教程</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="学习"><span class="iconfont-archer">&#xe60a;</span>学习</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Coke"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
