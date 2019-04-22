@@ -407,8 +407,7 @@ height:50vh;
 <p>下面是Alamofire和Moya的结构区别：</p>
 <p><img src="/Users/xiejianke/Downloads/WX20190422-103018.png" alt="WX20190422-103018"></p>
 <p>官方给出的解释是：你不应用直接引用Alamofire. 虽然它是一个很棒的库,但是Moya的观点是你不必处理那些低级的细节。</p>
-<p>###2.如何使用Moya</p>
-<p><a href="https://github.com/Moya/Moya/tree/master/docs_CN" target="_blank" rel="noopener">Moya中文官方文档</a>里面有中文文档，没使用过的可以看看。</p>
+<h3 id="2-如何使用Moya"><a href="#2-如何使用Moya" class="headerlink" title="2.如何使用Moya"></a>2.如何使用Moya</h3><p><a href="https://github.com/Moya/Moya/tree/master/docs_CN" target="_blank" rel="noopener">Moya中文官方文档</a>里面有中文文档，没使用过的可以看看。</p>
 <p>###3.对Moya的第二次封装</p>
 <h2 id="1-正常使用"><a href="#1-正常使用" class="headerlink" title="1.正常使用"></a>1.正常使用</h2><p>a.生成一个enum，写好每个API的方法</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">XjkAPI</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">case</span> testApi</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">case</span> testApiAllKey(para:<span class="type">String</span>,para1:<span class="type">String</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">case</span> testApiDict(param:[<span class="type">String</span>:<span class="type">Any</span>])</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -452,7 +451,7 @@ height:50vh;
             <p>原文作者：<a href="https://yirankege.github.io">Coke</a>
             <p>原文链接：<a href="https://yirankege.github.io/Moya的二次封装/">https://yirankege.github.io/Moya的二次封装/</a>
             <p>发表日期：<a href="https://yirankege.github.io/Moya的二次封装/">April 22nd 2019, 12:03:50 pm</a>
-            <p>更新日期：<a href="https://yirankege.github.io/Moya的二次封装/">April 22nd 2019, 9:43:55 pm</a>
+            <p>更新日期：<a href="https://yirankege.github.io/Moya的二次封装/">April 22nd 2019, 9:45:23 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -584,7 +583,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-为什么要用Moya"><span class="toc-number">1.</span> <span class="toc-text">1.为什么要用Moya</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-正常使用"><span class="toc-number">1.1.</span> <span class="toc-text">1.正常使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-再次封装"><span class="toc-number">1.2.</span> <span class="toc-text">2.再次封装</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-为什么要用Moya"><span class="toc-number">1.</span> <span class="toc-text">1.为什么要用Moya</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-如何使用Moya"><span class="toc-number">1.0.1.</span> <span class="toc-text">2.如何使用Moya</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-正常使用"><span class="toc-number">1.1.</span> <span class="toc-text">1.正常使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-再次封装"><span class="toc-number">1.2.</span> <span class="toc-text">2.再次封装</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
